@@ -125,11 +125,11 @@ class NovelStudioService:
             "capturing the key events and emotional beats:\n\n"
             f"{excerpt}"
         )
-        system = (
+        system_prompt = (
             "You are a literary editor. Write concise, accurate chapter summaries "
             "that capture plot points, character moments, and narrative tension."
         )
-        yield from ch_gen.stream_chat(system, user_prompt)
+        yield from ch_gen.stream_chat(system_prompt, user_prompt)
 
     def export_markdown(self, story: Story) -> Path:
         return FileManager(self._output_dir).export_markdown(story)
