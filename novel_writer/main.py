@@ -27,10 +27,36 @@ console = Console()
 
 @click.group()
 def cli() -> None:
-    """AI Novel Writer — generate novels with OpenAI."""
+    """AI Novel Writer — multi-provider AI novel assistant (CLI + local studio)."""
 
 
 cli.add_command(settings_cli)
+
+
+@cli.command("studio")
+@click.option("--host", default="127.0.0.1", show_default=True, help="Bind address")
+@click.option("--port", default=8765, show_default=True, type=int, help="HTTP port")
+def studio(host: str, port: int) -> None:
+    """Start the local web studio (FastAPI) in your browser."""
+    try:
+        import uvicorn
+    except ImportError as exc:
+        console.print(
+            "[red]Missing dependency:[/red] install the studio extras: "
+            "[bold]pip install -e \".[studio]\"[/bold]"
+        )
+        raise SystemExit(1) from exc
+
+    console.print(
+        f"[green]Studio[/green] → [bold]http://{host}:{port}/[/bold] "
+        "(Ctrl+C to stop)"
+    )
+    uvicorn.run(
+        "novel_writer.studio.app:app",
+        host=host,
+        port=port,
+        reload=False,
+    )
 
 
 # --------------------------------------------------------------------------- #

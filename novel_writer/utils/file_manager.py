@@ -99,3 +99,71 @@ class FileManager:
                 fh.write(chapter.content)
                 fh.write("\n\n")
         return path
+
+    def export_markdown(self, story: Story) -> Path:
+        """Export the full novel as Markdown."""
+        safe_title = "".join(c if c.isalnum() or c in " _-" else "_" for c in story.title)
+        safe_title = safe_title.strip().replace(" ", "_")
+        path = self.output_dir / f"{safe_title}.md"
+        lines: list[str] = [
+            f"# {story.title}",
+            "",
+        ]
+        if story.genre:
+            lines.append(f"**Genre:** {story.genre}")
+            lines.append("")
+        if story.premise:
+            lines.append("## Premise")
+            lines.append("")
+            lines.append(story.premise)
+            lines.append("")
+        if story.setting:
+            lines.append("## Setting")
+            lines.append("")
+            lines.append(story.setting)
+            lines.append("")
+        if story.outline:
+            lines.append("## Outline")
+            lines.append("")
+            lines.append(story.outline)
+            lines.append("")
+        for chapter in story.chapters:
+            title = chapter.title or f"Chapter {chapter.number}"
+            lines.append(f"## {chapter.display_title()}")
+            lines.append("")
+            if chapter.summary:
+                lines.append(f"*{chapter.summary}*")
+                lines.append("")
+            lines.append(chapter.content or "_No content._")
+            lines.append("")
+        path.write_text("\n".join(lines), encoding="utf-8")
+        return path
+
+    def export_docx(self, story: Story) -> Path:
+        """Export the manuscript as ``.docx`` (requires ``python-docx``)."""
+        try:
+            from docx import Document  # type: ignore[import]
+        except ImportError as exc:
+            raise ImportError(
+                "Export to DOCX requires python-docx. Install with: pip install python-docx"
+            ) from exc
+
+        safe_title = "".join(c if c.isalnum() or c in " _-" else "_" for c in story.title)
+        safe_title = safe_title.strip().replace(" ", "_")
+        path = self.output_dir / f"{safe_title}.docx"
+
+        document = Document()
+        document.add_heading(story.title, level=0)
+        if story.genre:
+            document.add_paragraph(f"Genre: {story.genre}")
+        if story.premise:
+            document.add_heading("Premise", level=1)
+            document.add_paragraph(story.premise)
+        for chapter in story.chapters:
+            document.add_heading(chapter.display_title(), level=1)
+            if chapter.summary:
+                document.add_paragraph(chapter.summary, style="Intense Quote")
+            document.add_paragraph(chapter.content or "")
+
+        document.save(str(path))
+        return path
