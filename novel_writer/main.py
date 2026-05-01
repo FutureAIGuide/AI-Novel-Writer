@@ -15,6 +15,7 @@ from novel_writer.generators.story_generator import StoryGenerator
 from novel_writer.generators.character_generator import CharacterGenerator
 from novel_writer.generators.chapter_generator import ChapterGenerator
 from novel_writer.utils.file_manager import FileManager
+from novel_writer.settings.cli import settings_cli
 
 console = Console()
 
@@ -27,6 +28,9 @@ console = Console()
 @click.group()
 def cli() -> None:
     """AI Novel Writer — generate novels with OpenAI."""
+
+
+cli.add_command(settings_cli)
 
 
 # --------------------------------------------------------------------------- #
