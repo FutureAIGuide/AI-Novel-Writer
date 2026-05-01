@@ -16,6 +16,20 @@ from novel_writer.studio.service import NovelStudioService
 _STATIC_DIR = Path(__file__).resolve().parent / "static"
 
 
+class CreateStoryBody(BaseModel):
+    title: str = Field(..., min_length=1)
+    genre: str = ""
+    setting: str = ""
+    premise: str = ""
+    outline: str = ""
+    style_notes: str = ""
+
+
+class SummaryStreamBody(BaseModel):
+    title: str
+    chapter_number: int = Field(..., ge=1)
+
+
 class SaveStoryBody(BaseModel):
     story: dict = Field(..., description="Serialized Story JSON")
 
@@ -64,6 +78,27 @@ def create_app(service: NovelStudioService | None = None) -> FastAPI:
     @app.get("/api/health")
     def health() -> dict[str, str]:
         return {"status": "ok"}
+
+    @app.post("/api/story/create")
+    def create_story(body: CreateStoryBody) -> dict:
+        story = Story(
+            title=body.title,
+            genre=body.genre,
+            setting=body.setting,
+            premise=body.premise,
+            outline=body.outline,
+            style_notes=body.style_notes,
+        )
+        svc.save_story(story)
+        return json.loads(story.model_dump_json())
+
+    @app.delete("/api/story")
+    def delete_story(title: str) -> dict[str, str]:
+        try:
+            svc.delete_story(title)
+        except FileNotFoundError:
+            raise HTTPException(status_code=404, detail=f"Story not found: {title!r}") from None
+        return {"deleted": title}
 
     @app.get("/api/settings")
     def settings() -> dict:
@@ -163,6 +198,21 @@ def create_app(service: NovelStudioService | None = None) -> FastAPI:
 
         return StreamingResponse(gen(), media_type="text/event-stream")
 
+    @app.post("/api/stream/summary")
+    def stream_summary(body: SummaryStreamBody) -> StreamingResponse:
+        try:
+            story = svc.load_story(body.title)
+        except FileNotFoundError:
+            raise HTTPException(status_code=404, detail=f"Story not found: {body.title!r}") from None
+        ch = story.get_chapter(body.chapter_number)
+        if ch is None:
+            raise HTTPException(status_code=400, detail="Chapter does not exist yet")
+
+        def gen():
+            yield from _sse_events(svc.stream_generate_chapter_summary(ch))
+
+        return StreamingResponse(gen(), media_type="text/event-stream")
+
     @app.post("/api/export/markdown")
     def export_md(title: str) -> dict[str, str]:
         try:
@@ -182,6 +232,15 @@ def create_app(service: NovelStudioService | None = None) -> FastAPI:
             path = svc.export_docx(story)
         except ImportError as exc:
             raise HTTPException(status_code=501, detail=str(exc)) from exc
+        return {"path": str(path)}
+
+    @app.post("/api/export/text")
+    def export_txt(title: str) -> dict[str, str]:
+        try:
+            story = svc.load_story(title)
+        except FileNotFoundError:
+            raise HTTPException(status_code=404, detail=f"Story not found: {title!r}") from None
+        path = svc.export_text(story)
         return {"path": str(path)}
 
     return app

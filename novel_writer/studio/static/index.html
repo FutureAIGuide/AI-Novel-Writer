@@ -11,6 +11,7 @@
     :root {
       --bg: #0f1115;
       --panel: #171a21;
+      --panel-raised: #1d2130;
       --border: #2a3140;
       --text: #e8eaef;
       --muted: #8b95a8;
@@ -18,6 +19,7 @@
       --accent-dim: #4a7ad4;
       --success: #5ecf8a;
       --danger: #f07178;
+      --warning: #e5a940;
     }
     * { box-sizing: border-box; }
     body {
@@ -29,112 +31,229 @@
       display: flex;
       flex-direction: column;
     }
+
+    /* ─── Header ─────────────────────────────────────────────────────────── */
     header {
-      padding: 0.75rem 1.25rem;
+      padding: 0.65rem 1.25rem;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      flex-wrap: wrap;
       background: var(--panel);
+      flex-shrink: 0;
     }
     header h1 {
       margin: 0;
-      font-size: 1.1rem;
-      font-weight: 600;
+      font-size: 1rem;
+      font-weight: 700;
       letter-spacing: -0.02em;
     }
-    .meta {
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
+    .meta { font-size: 0.78rem; color: var(--muted); }
+
+    /* ─── Layout ─────────────────────────────────────────────────────────── */
     .layout {
       flex: 1;
       display: grid;
-      grid-template-columns: 220px 1fr 280px;
+      grid-template-columns: 230px 1fr 282px;
       min-height: 0;
+      overflow: hidden;
     }
-    @media (max-width: 960px) {
+    @media (max-width: 900px) {
       .layout { grid-template-columns: 1fr; }
-      aside { border-right: none !important; border-bottom: 1px solid var(--border); }
+      aside, .tools { border-right: none !important; border-bottom: 1px solid var(--border); }
     }
-    aside {
+
+    /* ─── Left sidebar ───────────────────────────────────────────────────── */
+    aside#sidebar {
       border-right: 1px solid var(--border);
       background: var(--panel);
       display: flex;
       flex-direction: column;
       min-height: 0;
+      overflow: hidden;
     }
-    aside h2, .tools h2 {
-      margin: 0;
-      padding: 0.75rem 1rem;
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
+    .story-section {
+      display: flex;
+      flex-direction: column;
+      max-height: 45%;
+      min-height: 80px;
       border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .sidebar-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--muted);
+      font-weight: 600;
     }
     #story-list {
       list-style: none;
       margin: 0;
-      padding: 0.5rem;
+      padding: 0.35rem;
       overflow-y: auto;
       flex: 1;
     }
-    #story-list li {
-      padding: 0.5rem 0.65rem;
-      border-radius: 6px;
+    .story-item {
+      padding: 0.45rem 0.65rem;
+      border-radius: 5px;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .story-item:hover { background: #222733; }
+    .story-item.active { background: #243044; color: var(--accent); }
+
+    .chapter-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 0;
+    }
+    #chapter-list {
+      list-style: none;
+      margin: 0;
+      padding: 0.35rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .chapter-item {
+      padding: 0.38rem 0.65rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.4rem;
+    }
+    .chapter-item:hover { background: #222733; }
+    .chapter-item.active { background: #243044; }
+    .ch-num {
+      font-size: 0.68rem;
+      color: var(--accent);
+      min-width: 2.4rem;
+      font-weight: 600;
+    }
+    .ch-title {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       color: var(--text);
     }
-    #story-list li:hover { background: #222733; }
-    #story-list li.active { background: #243044; color: var(--accent); }
+    .ch-wc { font-size: 0.68rem; color: var(--muted); white-space: nowrap; }
+    .chapter-empty, .story-empty {
+      padding: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+      font-style: italic;
+    }
+    .total-word-count {
+      padding: 0.3rem 0.75rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .sidebar-footer {
+      padding: 0.5rem;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    /* ─── Main content ───────────────────────────────────────────────────── */
     main {
       display: flex;
       flex-direction: column;
       min-height: 0;
-      padding: 1rem;
+      overflow: hidden;
+    }
+    .placeholder-msg {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+    }
+    .placeholder-msg > div {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       gap: 0.75rem;
     }
-    .toolbar {
+    .placeholder-icon { font-size: 2.5rem; }
+    .placeholder-msg p { margin: 0; font-size: 0.9rem; }
+    #story-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* ─── Tab bar ────────────────────────────────────────────────────────── */
+    .tab-bar {
+      display: flex;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 0 0.75rem;
+      flex-shrink: 0;
+    }
+    .tab-btn {
+      font-family: inherit;
+      font-size: 0.82rem;
+      padding: 0.6rem 0.85rem;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--muted);
+      cursor: pointer;
+      margin-bottom: -1px;
+      transition: color 0.15s;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ─── Tab panels ─────────────────────────────────────────────────────── */
+    .tab-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .tab-panel.hidden { display: none !important; }
+
+    /* ─── Write tab ──────────────────────────────────────────────────────── */
+    #tab-write { padding: 0.65rem; gap: 0.45rem; }
+    .write-toolbar {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: 0.4rem;
       align-items: center;
     }
-    label { font-size: 0.8rem; color: var(--muted); }
-    select, input[type="number"], input[type="text"] {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 6px;
-      padding: 0.4rem 0.55rem;
-      font-family: inherit;
-      font-size: 0.85rem;
+    .extra-controls {
+      display: flex;
+      gap: 0.4rem;
     }
-    button {
-      font-family: inherit;
-      font-size: 0.85rem;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: #222733;
-      color: var(--text);
-      padding: 0.45rem 0.75rem;
-      cursor: pointer;
-    }
-    button.primary {
-      background: linear-gradient(180deg, var(--accent), var(--accent-dim));
-      border-color: transparent;
-      color: #0b0d12;
-      font-weight: 600;
-    }
-    button:disabled { opacity: 0.45; cursor: not-allowed; }
-    textarea#editor {
+    #editor {
       flex: 1;
-      min-height: 320px;
-      resize: vertical;
+      min-height: 200px;
+      resize: none;
       background: #12151c;
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -142,8 +261,110 @@
       padding: 1rem;
       font-family: "Literata", Georgia, serif;
       font-size: 1rem;
-      line-height: 1.65;
+      line-height: 1.7;
     }
+    #editor:focus { outline: none; border-color: var(--accent); }
+    .editor-footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .word-count { font-size: 0.78rem; color: var(--muted); }
+
+    /* ─── Story Bible tab ────────────────────────────────────────────────── */
+    #tab-bible { overflow-y: auto; padding: 0.75rem; }
+    .bible-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      max-width: 860px;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; }
+
+    /* ─── Characters tab ─────────────────────────────────────────────────── */
+    #tab-characters { padding: 0.65rem; }
+    .characters-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      min-height: 0;
+    }
+    .char-list-pane {
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--panel);
+    }
+    .pane-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .pane-header-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    #character-list {
+      list-style: none;
+      margin: 0;
+      padding: 0.35rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .char-item {
+      padding: 0.5rem 0.65rem;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+    .char-item:hover { background: #222733; }
+    .char-item.active { background: #243044; }
+    .char-name { font-size: 0.875rem; font-weight: 600; }
+    .char-role { font-size: 0.72rem; color: var(--muted); }
+    .char-empty { padding: 0.75rem; font-size: 0.8rem; color: var(--muted); text-align: center; font-style: italic; }
+    .char-form-pane {
+      padding: 0.75rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .char-form-placeholder {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.85rem;
+    }
+    .char-form-placeholder p { margin: 0.3rem 0 0; }
+    .char-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .char-form-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.25rem;
+    }
+
+    /* ─── Right tools panel ──────────────────────────────────────────────── */
     .tools {
       border-left: 1px solid var(--border);
       background: var(--panel);
@@ -151,180 +372,731 @@
       flex-direction: column;
       min-height: 0;
     }
-    .tools .panel-body {
-      padding: 0.75rem 1rem;
+    .tools > h2 {
+      margin: 0;
+      padding: 0.55rem 0.85rem;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .panel-body {
+      padding: 0.65rem 0.85rem;
       overflow-y: auto;
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
+      gap: 0.45rem;
     }
-    .tools button { width: 100%; text-align: left; }
     pre#outline {
       margin: 0;
       white-space: pre-wrap;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: var(--muted);
-      max-height: 200px;
+      max-height: 150px;
       overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem;
+      background: #12151c;
+      font-family: inherit;
     }
-    .status {
+    .section-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .sel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.3rem;
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0.15rem 0;
+    }
+    .hint { font-size: 0.75rem; color: var(--muted); margin: 0; }
+    .tools button,
+    .panel-body button { width: 100%; text-align: left; }
+    .sel-grid button { text-align: center; }
+
+    /* ─── Form elements ──────────────────────────────────────────────────── */
+    label { font-size: 0.78rem; color: var(--muted); }
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.22rem;
+    }
+    .bible-form label,
+    .char-form label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.22rem;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+    .bible-form input,
+    .bible-form textarea,
+    .char-form input,
+    .char-form textarea { width: 100%; }
+    select, input[type="number"], input[type="text"] {
+      background: var(--panel-raised);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 0.38rem 0.55rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+    }
+    select:focus, input[type="text"]:focus, input[type="number"]:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    textarea {
+      background: var(--panel-raised);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 0.38rem 0.55rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      resize: vertical;
+    }
+    textarea:focus { outline: none; border-color: var(--accent); }
+    .label-inline {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
       font-size: 0.8rem;
       color: var(--muted);
     }
-    .status.error { color: var(--danger); }
+
+    /* ─── Buttons ────────────────────────────────────────────────────────── */
+    button {
+      font-family: inherit;
+      font-size: 0.84rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--panel-raised);
+      color: var(--text);
+      padding: 0.4rem 0.7rem;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    button:hover { background: #2b3044; }
+    button.primary {
+      background: linear-gradient(180deg, var(--accent), var(--accent-dim));
+      border-color: transparent;
+      color: #0b0d12;
+      font-weight: 600;
+    }
+    button.primary:hover { background: linear-gradient(180deg, #80aeff, var(--accent)); }
+    button.danger {
+      background: rgba(240, 113, 120, 0.12);
+      border-color: rgba(240, 113, 120, 0.4);
+      color: var(--danger);
+    }
+    button.danger:hover { background: rgba(240, 113, 120, 0.22); }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .full-width { width: 100%; }
+    .btn-icon {
+      width: 1.7rem;
+      height: 1.7rem;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    /* ─── Status messages ────────────────────────────────────────────────── */
+    .status { font-size: 0.78rem; color: var(--muted); }
     .status.ok { color: var(--success); }
+    .status.error { color: var(--danger); }
+    .status.warning { color: var(--warning); }
+
+    /* ─── Modal ──────────────────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+    .modal-box {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      width: min(420px, 92vw);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .modal-box h3 { margin: 0; font-size: 1.05rem; }
+    .modal-box label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .modal-box input { width: 100%; }
+    .modal-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      margin-top: 0.35rem;
+    }
+
+    /* ─── Utils ──────────────────────────────────────────────────────────── */
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
   <header>
-    <h1>AI Novel Writer Studio</h1>
+    <h1>✦ AI Novel Writer Studio</h1>
     <div class="meta" id="provider-meta">Loading…</div>
   </header>
-  <div class="layout">
-    <aside>
-      <h2>Stories</h2>
-      <ul id="story-list"></ul>
-    </aside>
-    <main>
-      <div class="toolbar">
-        <label>Chapter <input type="number" id="chapter-num" min="1" value="1" style="width:4rem" /></label>
-        <input type="text" id="chapter-title" placeholder="Chapter title (optional)" style="min-width:12rem;flex:1" />
-        <input type="text" id="chapter-summary" placeholder="Summary / beats (optional)" style="min-width:14rem;flex:2" />
-        <button type="button" class="primary" id="btn-generate">Generate chapter</button>
-        <button type="button" id="btn-continue">Continue</button>
-        <button type="button" id="btn-save">Save</button>
+
+  <!-- ── New Story Modal ─────────────────────────────────────────────────── -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h3>Create New Story</h3>
+      <label>
+        Title
+        <input type="text" id="new-title" placeholder="My Novel" autocomplete="off" />
+      </label>
+      <label>
+        Genre <span style="text-transform:none;font-size:0.7rem;opacity:0.7">(optional)</span>
+        <input type="text" id="new-genre" placeholder="fantasy, sci-fi, thriller…" autocomplete="off" />
+      </label>
+      <div class="modal-actions">
+        <button id="btn-cancel-story">Cancel</button>
+        <button class="primary" id="btn-create-story">Create Story</button>
       </div>
-      <textarea id="editor" placeholder="Open a story and write, or generate with AI…"></textarea>
-      <div class="toolbar">
-        <span class="status" id="ctx-status"></span>
-        <span class="status" id="stream-status"></span>
-      </div>
-    </main>
-    <aside class="tools">
-      <h2>Outline &amp; selection</h2>
-      <div class="panel-body">
-        <pre id="outline"></pre>
-        <label>Selection tools (uses highlighted text in editor)</label>
-        <button type="button" data-op="rewrite">Rewrite selection</button>
-        <button type="button" data-op="expand">Expand</button>
-        <button type="button" data-op="shorten">Shorten</button>
-        <button type="button" data-op="tone_dramatic">Tone: dramatic</button>
-        <button type="button" data-op="tone_subtle">Tone: subtle</button>
-        <button type="button" id="btn-replace-selection">Replace selection with result</button>
-        <hr style="border:none;border-top:1px solid var(--border);margin:0.5rem 0" />
-        <button type="button" id="btn-export-md">Export Markdown</button>
-        <button type="button" id="btn-export-docx">Export DOCX</button>
-        <button type="button" id="btn-snapshot">Snapshot chapter (manual)</button>
-        <button type="button" id="btn-restore">Restore last snapshot</button>
-      </div>
-    </aside>
+    </div>
   </div>
+
+  <!-- ── Main layout ─────────────────────────────────────────────────────── -->
+  <div class="layout">
+
+    <!-- ── Left sidebar ──────────────────────────────────────────────────── -->
+    <aside id="sidebar">
+      <div class="story-section">
+        <div class="sidebar-header">
+          <span class="sidebar-label">Stories</span>
+          <button class="btn-icon" id="btn-new-story" title="New story">+</button>
+        </div>
+        <ul id="story-list"></ul>
+      </div>
+
+      <div class="chapter-section hidden" id="chapter-sidebar">
+        <div class="sidebar-header">
+          <span class="sidebar-label">Chapters</span>
+          <button class="btn-icon" id="btn-add-chapter" title="Add new chapter">+</button>
+        </div>
+        <ul id="chapter-list"></ul>
+        <div class="total-word-count" id="total-word-count"></div>
+      </div>
+
+      <div class="sidebar-footer hidden" id="story-actions">
+        <button class="danger full-width" id="btn-delete-story">Delete Story…</button>
+      </div>
+    </aside>
+
+    <!-- ── Main content ───────────────────────────────────────────────────── -->
+    <main>
+      <!-- No story selected placeholder -->
+      <div id="no-story" class="placeholder-msg">
+        <div>
+          <div class="placeholder-icon">📖</div>
+          <p>Select a story or create a new one to get started</p>
+          <button class="primary" id="btn-new-story-2">+ New Story</button>
+        </div>
+      </div>
+
+      <!-- Story UI (hidden until story loaded) -->
+      <div id="story-main" class="hidden">
+        <!-- Tab bar -->
+        <div class="tab-bar">
+          <button class="tab-btn active" data-tab="write">✏ Write</button>
+          <button class="tab-btn" data-tab="bible">📚 Story Bible</button>
+          <button class="tab-btn" data-tab="characters">👤 Characters</button>
+        </div>
+
+        <!-- ── Write Tab ────────────────────────────────────────────────── -->
+        <div id="tab-write" class="tab-panel">
+          <div class="write-toolbar">
+            <label class="label-inline">
+              Ch
+              <input type="number" id="chapter-num" min="1" value="1" style="width:3.5rem" />
+            </label>
+            <input type="text" id="chapter-title" placeholder="Chapter title (optional)" style="flex:1;min-width:8rem" />
+            <input type="text" id="chapter-summary" placeholder="Summary / beats (optional)" style="flex:2;min-width:10rem" />
+            <button class="primary" id="btn-generate">⚡ Generate</button>
+            <button id="btn-continue">↩ Continue</button>
+            <button id="btn-gen-summary" title="Generate a summary from the chapter content">✦ Summarise</button>
+            <button id="btn-save-chapter">💾 Save</button>
+          </div>
+          <div class="extra-controls">
+            <input type="text" id="continuation-hint" placeholder="Continuation hint — guide where the story goes next (optional)…" style="flex:1" />
+            <input type="text" id="extra-instructions" placeholder="Extra instructions for the AI (optional)…" style="flex:1" />
+          </div>
+          <textarea id="editor" placeholder="Start writing here, or click Generate to create a chapter with AI…" spellcheck="true"></textarea>
+          <div class="editor-footer">
+            <span id="word-count" class="word-count"></span>
+            <span id="ctx-status" class="status"></span>
+            <span style="flex:1"></span>
+            <span id="stream-status" class="status"></span>
+          </div>
+        </div>
+
+        <!-- ── Story Bible Tab ──────────────────────────────────────────── -->
+        <div id="tab-bible" class="tab-panel hidden">
+          <div class="bible-form">
+            <div class="form-row">
+              <label>
+                Title
+                <input type="text" id="bible-title" autocomplete="off" />
+              </label>
+              <label>
+                Genre
+                <input type="text" id="bible-genre" placeholder="fantasy, thriller, sci-fi, romance…" autocomplete="off" />
+              </label>
+            </div>
+            <label>
+              Setting
+              <textarea id="bible-setting" rows="3" placeholder="Time period, world description, atmosphere…"></textarea>
+            </label>
+            <label>
+              Premise
+              <textarea id="bible-premise" rows="3" placeholder="Core premise / logline — the one-sentence description of your story…"></textarea>
+            </label>
+            <label>
+              Outline
+              <textarea id="bible-outline" rows="8" placeholder="Chapter-by-chapter plot outline…"></textarea>
+            </label>
+            <label>
+              Style Notes
+              <textarea id="bible-style" rows="3" placeholder="Authorial tone, point-of-view, voice and style preferences…"></textarea>
+            </label>
+            <div>
+              <button class="primary" id="btn-save-bible">Save Story Bible</button>
+              <span id="bible-status" class="status" style="margin-left:0.75rem"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Characters Tab ───────────────────────────────────────────── -->
+        <div id="tab-characters" class="tab-panel hidden">
+          <div class="characters-layout">
+            <div class="char-list-pane">
+              <div class="pane-header">
+                <span class="pane-header-label">Characters</span>
+                <button class="btn-icon" id="btn-add-char" title="Add character">+</button>
+              </div>
+              <ul id="character-list"></ul>
+            </div>
+            <div class="char-form-pane">
+              <div id="char-form-placeholder" class="char-form-placeholder">
+                <div>
+                  <div style="font-size:2rem;margin-bottom:0.35rem">👤</div>
+                  <p>Select a character to edit,<br />or click <strong>+</strong> to add one</p>
+                </div>
+              </div>
+              <div id="char-form" class="char-form hidden">
+                <div class="form-row">
+                  <label>
+                    Name
+                    <input type="text" id="char-name" autocomplete="off" />
+                  </label>
+                  <label>
+                    Role
+                    <input type="text" id="char-role" placeholder="protagonist, antagonist, mentor…" autocomplete="off" />
+                  </label>
+                </div>
+                <label>
+                  Description
+                  <textarea id="char-description" rows="2" placeholder="Physical appearance and personality…"></textarea>
+                </label>
+                <label>
+                  Backstory
+                  <textarea id="char-backstory" rows="3" placeholder="Background and history…"></textarea>
+                </label>
+                <label>
+                  Motivation
+                  <textarea id="char-motivation" rows="2" placeholder="What drives this character…"></textarea>
+                </label>
+                <label>
+                  Arc
+                  <textarea id="char-arc" rows="2" placeholder="Development arc throughout the story…"></textarea>
+                </label>
+                <div class="char-form-actions">
+                  <button class="primary" id="btn-save-char">Save Character</button>
+                  <button class="danger hidden" id="btn-delete-char">Delete</button>
+                  <button id="btn-cancel-char">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- #story-main -->
+    </main>
+
+    <!-- ── Right tools panel ─────────────────────────────────────────────── -->
+    <div class="tools">
+      <h2>Tools</h2>
+      <div class="panel-body">
+        <div class="section-label">Outline</div>
+        <pre id="outline">(no outline)</pre>
+
+        <div class="section-label" style="margin-top:0.35rem">Selection Tools</div>
+        <p class="hint">Highlight text in the editor, then apply an operation:</p>
+        <div class="sel-grid">
+          <button class="sel-op-btn" data-op="rewrite">Rewrite</button>
+          <button class="sel-op-btn" data-op="expand">Expand</button>
+          <button class="sel-op-btn" data-op="shorten">Shorten</button>
+          <button class="sel-op-btn" data-op="tone_dramatic">Dramatic</button>
+          <button class="sel-op-btn" data-op="tone_subtle">Subtle</button>
+        </div>
+        <input type="text" id="extra-sel-instruction" placeholder="Extra instruction for selection op…" style="width:100%" />
+        <button id="btn-replace-selection">↩ Replace selection with result</button>
+
+        <hr class="divider" />
+
+        <div class="section-label">Export</div>
+        <button id="btn-export-md">Export Markdown</button>
+        <button id="btn-export-docx">Export DOCX</button>
+        <button id="btn-export-txt">Export Plain Text</button>
+
+        <hr class="divider" />
+
+        <div class="section-label">History</div>
+        <button id="btn-snapshot">Snapshot chapter</button>
+        <button id="btn-restore">Restore last snapshot</button>
+        <span class="hint" id="snapshot-count"></span>
+      </div>
+    </div>
+
+  </div><!-- .layout -->
+
   <script>
+    "use strict";
     const API = "";
     let currentStory = null;
+    let currentChapter = 1;
     let lastStreamText = "";
+    let editingCharIdx = -1;
+
+    // ── Utilities ────────────────────────────────────────────────────────────
 
     async function fetchJSON(url, opts) {
-      const r = await fetch(url, opts);
+      const r = await fetch(url, opts || {});
       if (!r.ok) {
-        const t = await r.text();
+        const t = await r.text().catch(() => r.statusText);
         throw new Error(t || r.statusText);
       }
       return r.json();
     }
 
+    function wordCount(text) {
+      if (!text || !text.trim()) return 0;
+      return text.trim().split(/\s+/).length;
+    }
+
+    function setStatus(id, text, cls) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = text;
+      el.className = "status" + (cls ? " " + cls : "");
+    }
+
+    // ── Provider meta ────────────────────────────────────────────────────────
+
     async function loadMeta() {
       try {
-        const s = await fetchJSON(API + "/api/settings", {});
+        const s = await fetchJSON(API + "/api/settings");
         document.getElementById("provider-meta").textContent =
-          `${s.active_provider} · ${s.model || "default"} · ${s.supports_streaming ? "streaming" : "no stream"}`;
+          `${s.active_provider} · ${s.model || "default"} · ${s.supports_streaming ? "streaming" : "non-streaming"}`;
       } catch (e) {
-        document.getElementById("provider-meta").textContent = String(e);
+        document.getElementById("provider-meta").textContent = "Error: " + e.message;
       }
     }
 
+    // ── Story list ───────────────────────────────────────────────────────────
+
     async function refreshStories() {
-      const { titles } = await fetchJSON(API + "/api/stories", {});
+      const { titles } = await fetchJSON(API + "/api/stories");
       const ul = document.getElementById("story-list");
       ul.innerHTML = "";
+      if (titles.length === 0) {
+        const li = document.createElement("li");
+        li.className = "story-empty";
+        li.textContent = "No stories yet";
+        ul.appendChild(li);
+        return;
+      }
       titles.forEach((t) => {
         const li = document.createElement("li");
         li.textContent = t;
         li.dataset.title = t;
-        li.addEventListener("click", () => openStory(t, li));
+        li.className = "story-item" + (currentStory && currentStory.title === t ? " active" : "");
+        li.addEventListener("click", () => openStory(t));
         ul.appendChild(li);
       });
     }
 
-    async function openStory(title, liEl) {
-      document.querySelectorAll("#story-list li").forEach((x) => x.classList.remove("active"));
-      if (liEl) liEl.classList.add("active");
-      currentStory = await fetchJSON(API + "/api/story?title=" + encodeURIComponent(title), {});
-      const n = parseInt(document.getElementById("chapter-num").value, 10) || 1;
-      const ch = (currentStory.chapters || []).find((c) => c.number === n);
-      document.getElementById("editor").value = ch ? ch.content : "";
-      document.getElementById("chapter-title").value = ch ? ch.title : "";
-      document.getElementById("chapter-summary").value = ch ? ch.summary : "";
-      document.getElementById("outline").textContent = currentStory.outline || "(no outline)";
+    // ── Open story ───────────────────────────────────────────────────────────
+
+    async function openStory(title) {
+      try {
+        currentStory = await fetchJSON(API + "/api/story?title=" + encodeURIComponent(title));
+      } catch (e) {
+        alert("Failed to load story: " + e.message);
+        return;
+      }
+      currentChapter = currentStory.chapters && currentStory.chapters.length
+        ? currentStory.chapters[0].number
+        : 1;
+
+      document.getElementById("no-story").classList.add("hidden");
+      document.getElementById("story-main").classList.remove("hidden");
+      document.getElementById("story-actions").classList.remove("hidden");
+      document.getElementById("chapter-sidebar").classList.remove("hidden");
+
+      document.querySelectorAll(".story-item").forEach((li) => {
+        li.classList.toggle("active", li.dataset.title === title);
+      });
+
+      renderChapterList();
+      populateWriteTab();
+      populateBibleTab();
+      renderCharacterList();
       await refreshContextPack();
     }
 
+    // ── Chapter list (sidebar) ───────────────────────────────────────────────
+
+    function renderChapterList() {
+      const ul = document.getElementById("chapter-list");
+      ul.innerHTML = "";
+      if (!currentStory) return;
+      const chapters = currentStory.chapters || [];
+      if (chapters.length === 0) {
+        const li = document.createElement("li");
+        li.className = "chapter-empty";
+        li.textContent = "No chapters yet";
+        ul.appendChild(li);
+        updateTotalWordCount();
+        return;
+      }
+      chapters.forEach((ch) => {
+        const li = document.createElement("li");
+        li.className = "chapter-item" + (ch.number === currentChapter ? " active" : "");
+        li.dataset.number = ch.number;
+        const num = document.createElement("span");
+        num.className = "ch-num";
+        num.textContent = "Ch " + ch.number;
+        const title = document.createElement("span");
+        title.className = "ch-title";
+        title.textContent = ch.title || "(untitled)";
+        const wc = document.createElement("span");
+        wc.className = "ch-wc";
+        const n = wordCount(ch.content);
+        wc.textContent = n > 0 ? n.toLocaleString() + " w" : "—";
+        li.append(num, title, wc);
+        li.addEventListener("click", () => selectChapter(ch.number));
+        ul.appendChild(li);
+      });
+      updateTotalWordCount();
+    }
+
+    function updateTotalWordCount() {
+      const chapters = (currentStory && currentStory.chapters) || [];
+      const total = chapters.reduce((s, ch) => s + wordCount(ch.content), 0);
+      document.getElementById("total-word-count").textContent =
+        total > 0 ? total.toLocaleString() + " words total" : "";
+    }
+
+    function selectChapter(n) {
+      currentChapter = n;
+      document.getElementById("chapter-num").value = n;
+      document.querySelectorAll(".chapter-item").forEach((li) => {
+        li.classList.toggle("active", parseInt(li.dataset.number) === n);
+      });
+      populateWriteTab();
+      refreshContextPack();
+    }
+
+    // ── Write tab ────────────────────────────────────────────────────────────
+
+    function populateWriteTab() {
+      if (!currentStory) return;
+      const n = currentChapter;
+      const ch = (currentStory.chapters || []).find((c) => c.number === n);
+      document.getElementById("chapter-num").value = n;
+      document.getElementById("chapter-title").value = ch ? ch.title : "";
+      document.getElementById("chapter-summary").value = ch ? ch.summary : "";
+      document.getElementById("editor").value = ch ? ch.content : "";
+      updateEditorWordCount();
+      updateSnapshotInfo();
+    }
+
+    function updateEditorWordCount() {
+      const n = wordCount(document.getElementById("editor").value);
+      document.getElementById("word-count").textContent = n > 0 ? n.toLocaleString() + " words" : "";
+    }
+
+    // ── Story Bible tab ──────────────────────────────────────────────────────
+
+    function populateBibleTab() {
+      if (!currentStory) return;
+      document.getElementById("bible-title").value = currentStory.title || "";
+      document.getElementById("bible-genre").value = currentStory.genre || "";
+      document.getElementById("bible-setting").value = currentStory.setting || "";
+      document.getElementById("bible-premise").value = currentStory.premise || "";
+      document.getElementById("bible-outline").value = currentStory.outline || "";
+      document.getElementById("bible-style").value = currentStory.style_notes || "";
+      document.getElementById("outline").textContent = currentStory.outline || "(no outline)";
+    }
+
+    // ── Characters tab ───────────────────────────────────────────────────────
+
+    function renderCharacterList() {
+      const ul = document.getElementById("character-list");
+      ul.innerHTML = "";
+      const chars = (currentStory && currentStory.characters) || [];
+      if (chars.length === 0) {
+        const li = document.createElement("li");
+        li.className = "char-empty";
+        li.textContent = "No characters yet";
+        ul.appendChild(li);
+        return;
+      }
+      chars.forEach((ch, idx) => {
+        const li = document.createElement("li");
+        li.className = "char-item";
+        li.dataset.idx = idx;
+        const name = document.createElement("span");
+        name.className = "char-name";
+        name.textContent = ch.name;
+        const role = document.createElement("span");
+        role.className = "char-role";
+        role.textContent = ch.role;
+        li.append(name, role);
+        li.addEventListener("click", () => editCharacter(idx));
+        ul.appendChild(li);
+      });
+    }
+
+    function showCharForm(visible) {
+      document.getElementById("char-form-placeholder").classList.toggle("hidden", visible);
+      document.getElementById("char-form").classList.toggle("hidden", !visible);
+    }
+
+    function editCharacter(idx) {
+      editingCharIdx = idx;
+      document.querySelectorAll(".char-item").forEach((li) => {
+        li.classList.toggle("active", parseInt(li.dataset.idx) === idx);
+      });
+      if (idx === -1) {
+        document.getElementById("char-name").value = "";
+        document.getElementById("char-role").value = "";
+        document.getElementById("char-description").value = "";
+        document.getElementById("char-backstory").value = "";
+        document.getElementById("char-motivation").value = "";
+        document.getElementById("char-arc").value = "";
+        document.getElementById("btn-delete-char").classList.add("hidden");
+      } else {
+        const ch = currentStory.characters[idx];
+        document.getElementById("char-name").value = ch.name;
+        document.getElementById("char-role").value = ch.role;
+        document.getElementById("char-description").value = ch.description || "";
+        document.getElementById("char-backstory").value = ch.backstory || "";
+        document.getElementById("char-motivation").value = ch.motivation || "";
+        document.getElementById("char-arc").value = ch.arc || "";
+        document.getElementById("btn-delete-char").classList.remove("hidden");
+      }
+      showCharForm(true);
+    }
+
+    // ── Tab switching ────────────────────────────────────────────────────────
+
+    function switchTab(tab) {
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.tab === tab);
+      });
+      document.querySelectorAll(".tab-panel").forEach((panel) => {
+        panel.classList.add("hidden");
+      });
+      document.getElementById("tab-" + tab).classList.remove("hidden");
+    }
+
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+    });
+
+    // ── Context pack ─────────────────────────────────────────────────────────
+
     async function refreshContextPack() {
       if (!currentStory) return;
-      const title = currentStory.title;
-      const n = parseInt(document.getElementById("chapter-num").value, 10) || 1;
+      const n = parseInt(document.getElementById("chapter-num").value) || 1;
       try {
         const m = await fetchJSON(
-          API + "/api/context-pack?title=" + encodeURIComponent(title) + "&before_chapter=" + n,
-          {}
+          API + "/api/context-pack?title=" + encodeURIComponent(currentStory.title) +
+          "&before_chapter=" + n
         );
         const pct = m.budget_tokens
           ? Math.round((m.estimated_prompt_tokens / m.budget_tokens) * 100)
           : 0;
-        document.getElementById("ctx-status").textContent =
-          `Context ~${m.estimated_prompt_tokens} / ${m.budget_tokens} est. tokens (${pct}%)` +
-          (m.trimmed ? " · trimmed for budget" : "");
-        document.getElementById("ctx-status").className = "status" + (m.trimmed ? " error" : " ok");
+        setStatus(
+          "ctx-status",
+          `~${m.estimated_prompt_tokens.toLocaleString()} / ${m.budget_tokens.toLocaleString()} tokens (${pct}%)` +
+          (m.trimmed ? " · trimmed" : ""),
+          m.trimmed ? "warning" : "ok"
+        );
       } catch (e) {
-        document.getElementById("ctx-status").textContent = String(e);
-        document.getElementById("ctx-status").className = "status error";
+        setStatus("ctx-status", e.message, "error");
       }
     }
 
-    document.getElementById("chapter-num").addEventListener("change", async () => {
-      if (!currentStory) return;
-      const n = parseInt(document.getElementById("chapter-num").value, 10) || 1;
-      const ch = (currentStory.chapters || []).find((c) => c.number === n);
-      document.getElementById("editor").value = ch ? ch.content : "";
-      document.getElementById("chapter-title").value = ch ? ch.title : "";
-      document.getElementById("chapter-summary").value = ch ? ch.summary : "";
-      await refreshContextPack();
-    });
+    // ── SSE streaming ────────────────────────────────────────────────────────
 
-    /**
-     * @param {string} url
-     * @param {object} body
-     * @param {{ prefix?: string }} opts - if prefix set, streamed chunks append after prefix
-     */
     async function readSSE(url, body, opts) {
       opts = opts || {};
       const prefix = opts.prefix || "";
-      lastStreamText = "";
+      const targetEl = opts.target || document.getElementById("editor");
+      const updateLast = opts.updateLast !== false;
+      lastStreamText = prefix;
       let delta = "";
-      const st = document.getElementById("stream-status");
-      st.textContent = "Streaming…";
-      st.className = "status";
+      setStatus("stream-status", "Streaming…", "");
+
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
       if (!res.ok || !res.body) {
-        st.textContent = await res.text();
-        st.className = "status error";
-        throw new Error(st.textContent);
+        const t = await res.text().catch(() => res.statusText);
+        setStatus("stream-status", t, "error");
+        throw new Error(t);
       }
+
       const reader = res.body.getReader();
       const dec = new TextDecoder();
       let buf = "";
@@ -337,22 +1109,24 @@
           const line = buf.slice(0, idx).trimEnd();
           buf = buf.slice(idx + 2);
           if (!line.startsWith("data:")) continue;
-          const jsonStr = line.slice(5).trim();
           try {
-            const obj = JSON.parse(jsonStr);
+            const obj = JSON.parse(line.slice(5).trim());
             if (obj.chunk) {
               delta += obj.chunk;
-              lastStreamText = prefix + delta;
-              document.getElementById("editor").value = lastStreamText;
+              const full = prefix + delta;
+              targetEl.value = full;
+              if (updateLast) lastStreamText = full;
+              if (targetEl === document.getElementById("editor")) updateEditorWordCount();
             }
             if (obj.done) {
-              st.textContent = "Done.";
-              st.className = "status ok";
+              setStatus("stream-status", "Done.", "ok");
             }
-          } catch (_) {}
+          } catch (_) { /* ignore malformed JSON */ }
         }
       }
     }
+
+    // ── Generate chapter ─────────────────────────────────────────────────────
 
     document.getElementById("btn-generate").addEventListener("click", async () => {
       if (!currentStory) return alert("Open a story first.");
@@ -363,24 +1137,22 @@
           API + "/api/stream/chapter",
           {
             title: currentStory.title,
-            chapter_number: parseInt(document.getElementById("chapter-num").value, 10) || 1,
+            chapter_number: parseInt(document.getElementById("chapter-num").value) || 1,
             chapter_title: document.getElementById("chapter-title").value,
             chapter_summary: document.getElementById("chapter-summary").value,
-            extra_instructions: "",
-          },
-          {}
+            extra_instructions: document.getElementById("extra-instructions").value,
+          }
         );
-      } catch (e) {
-        document.getElementById("stream-status").textContent = String(e);
-        document.getElementById("stream-status").className = "status error";
-      } finally {
+      } catch (_) { /* error already set in stream-status */ } finally {
         btn.disabled = false;
       }
     });
 
+    // ── Continue chapter ─────────────────────────────────────────────────────
+
     document.getElementById("btn-continue").addEventListener("click", async () => {
       if (!currentStory) return alert("Open a story first.");
-      const n = parseInt(document.getElementById("chapter-num").value, 10) || 1;
+      const n = parseInt(document.getElementById("chapter-num").value) || 1;
       const existing = (currentStory.chapters || []).find((c) => c.number === n);
       const base = existing ? existing.content : "";
       document.getElementById("editor").value = base;
@@ -392,44 +1164,319 @@
           {
             title: currentStory.title,
             chapter_number: n,
-            continuation_hint: "",
+            continuation_hint: document.getElementById("continuation-hint").value,
           },
           { prefix: base }
         );
-      } catch (e) {
-        document.getElementById("stream-status").textContent = String(e);
-        document.getElementById("stream-status").className = "status error";
-      } finally {
+      } catch (_) {} finally {
         btn.disabled = false;
       }
     });
 
-    document.querySelectorAll(".tools button[data-op]").forEach((btn) => {
+    // ── Generate summary ─────────────────────────────────────────────────────
+
+    document.getElementById("btn-gen-summary").addEventListener("click", async () => {
+      if (!currentStory) return alert("Open a story first.");
+      const n = parseInt(document.getElementById("chapter-num").value) || 1;
+      const ch = (currentStory.chapters || []).find((c) => c.number === n);
+      if (!ch || !ch.content.trim()) {
+        return alert("Save the chapter content first, then generate a summary.");
+      }
+      const btn = document.getElementById("btn-gen-summary");
+      btn.disabled = true;
+      try {
+        await readSSE(
+          API + "/api/stream/summary",
+          { title: currentStory.title, chapter_number: n },
+          { target: document.getElementById("chapter-summary"), updateLast: false }
+        );
+      } catch (_) {} finally {
+        btn.disabled = false;
+      }
+    });
+
+    // ── Save chapter ─────────────────────────────────────────────────────────
+
+    async function saveChapter() {
+      if (!currentStory) return;
+      const n = parseInt(document.getElementById("chapter-num").value) || 1;
+      let chapters = [...(currentStory.chapters || [])];
+      const idx = chapters.findIndex((c) => c.number === n);
+      const body = {
+        number: n,
+        title: document.getElementById("chapter-title").value,
+        summary: document.getElementById("chapter-summary").value,
+        content: document.getElementById("editor").value,
+        notes: idx >= 0 ? (chapters[idx].notes || "") : "",
+        content_history: idx >= 0 ? (chapters[idx].content_history || []) : [],
+      };
+      if (idx >= 0) chapters[idx] = body;
+      else chapters.push(body);
+      chapters.sort((a, b) => a.number - b.number);
+      const payload = { ...currentStory, chapters };
+      await fetchJSON(API + "/api/story", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ story: payload }),
+      });
+      currentStory = payload;
+      currentChapter = n;
+      renderChapterList();
+      setStatus("stream-status", "Saved.", "ok");
+    }
+
+    document.getElementById("btn-save-chapter").addEventListener("click", async () => {
+      try {
+        await saveChapter();
+      } catch (e) {
+        setStatus("stream-status", "Save failed: " + e.message, "error");
+      }
+    });
+
+    // Ctrl+S / Cmd+S shortcut
+    document.addEventListener("keydown", async (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        e.preventDefault();
+        const tab = document.querySelector(".tab-btn.active");
+        if (tab && tab.dataset.tab === "write") {
+          try { await saveChapter(); } catch (_) {}
+        }
+      }
+    });
+
+    // ── Save Story Bible ─────────────────────────────────────────────────────
+
+    document.getElementById("btn-save-bible").addEventListener("click", async () => {
+      if (!currentStory) return;
+      const newTitle = document.getElementById("bible-title").value.trim();
+      if (!newTitle) return alert("Title cannot be empty.");
+      const payload = {
+        ...currentStory,
+        title: newTitle,
+        genre: document.getElementById("bible-genre").value,
+        setting: document.getElementById("bible-setting").value,
+        premise: document.getElementById("bible-premise").value,
+        outline: document.getElementById("bible-outline").value,
+        style_notes: document.getElementById("bible-style").value,
+      };
+      try {
+        await fetchJSON(API + "/api/story", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ story: payload }),
+        });
+        currentStory = payload;
+        document.getElementById("outline").textContent = payload.outline || "(no outline)";
+        await refreshStories();
+        setStatus("bible-status", "Saved.", "ok");
+        setTimeout(() => setStatus("bible-status", "", ""), 3000);
+      } catch (e) {
+        setStatus("bible-status", "Save failed: " + e.message, "error");
+      }
+    });
+
+    // ── Characters ───────────────────────────────────────────────────────────
+
+    document.getElementById("btn-add-char").addEventListener("click", () => {
+      if (!currentStory) return;
+      editingCharIdx = -1;
+      document.querySelectorAll(".char-item").forEach((li) => li.classList.remove("active"));
+      editCharacter(-1);
+    });
+
+    document.getElementById("btn-save-char").addEventListener("click", async () => {
+      if (!currentStory) return;
+      const name = document.getElementById("char-name").value.trim();
+      if (!name) return alert("Character name is required.");
+      const charData = {
+        name,
+        role: document.getElementById("char-role").value,
+        description: document.getElementById("char-description").value,
+        backstory: document.getElementById("char-backstory").value,
+        motivation: document.getElementById("char-motivation").value,
+        arc: document.getElementById("char-arc").value,
+      };
+      let chars = [...(currentStory.characters || [])];
+      if (editingCharIdx >= 0) chars[editingCharIdx] = charData;
+      else chars.push(charData);
+      const payload = { ...currentStory, characters: chars };
+      try {
+        await fetchJSON(API + "/api/story", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ story: payload }),
+        });
+        currentStory = payload;
+        renderCharacterList();
+        showCharForm(false);
+        editingCharIdx = -1;
+        setStatus("stream-status", "Character saved.", "ok");
+      } catch (e) {
+        alert("Failed to save character: " + e.message);
+      }
+    });
+
+    document.getElementById("btn-delete-char").addEventListener("click", async () => {
+      if (!currentStory || editingCharIdx < 0) return;
+      const name = currentStory.characters[editingCharIdx].name;
+      if (!confirm(`Delete character "${name}"? This cannot be undone.`)) return;
+      const chars = (currentStory.characters || []).filter((_, i) => i !== editingCharIdx);
+      const payload = { ...currentStory, characters: chars };
+      try {
+        await fetchJSON(API + "/api/story", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ story: payload }),
+        });
+        currentStory = payload;
+        renderCharacterList();
+        showCharForm(false);
+        editingCharIdx = -1;
+        setStatus("stream-status", "Character deleted.", "ok");
+      } catch (e) {
+        alert("Failed to delete character: " + e.message);
+      }
+    });
+
+    document.getElementById("btn-cancel-char").addEventListener("click", () => {
+      showCharForm(false);
+      document.querySelectorAll(".char-item").forEach((li) => li.classList.remove("active"));
+      editingCharIdx = -1;
+    });
+
+    // ── New story modal ──────────────────────────────────────────────────────
+
+    function openModal() {
+      document.getElementById("modal-overlay").classList.remove("hidden");
+      setTimeout(() => document.getElementById("new-title").focus(), 50);
+    }
+    function closeModal() {
+      document.getElementById("modal-overlay").classList.add("hidden");
+      document.getElementById("new-title").value = "";
+      document.getElementById("new-genre").value = "";
+    }
+
+    document.getElementById("btn-new-story").addEventListener("click", openModal);
+    document.getElementById("btn-new-story-2").addEventListener("click", openModal);
+    document.getElementById("btn-cancel-story").addEventListener("click", closeModal);
+    document.getElementById("modal-overlay").addEventListener("click", (e) => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+
+    document.getElementById("new-title").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") document.getElementById("btn-create-story").click();
+    });
+
+    document.getElementById("btn-create-story").addEventListener("click", async () => {
+      const title = document.getElementById("new-title").value.trim();
+      if (!title) return alert("Title is required.");
+      const genre = document.getElementById("new-genre").value.trim();
+      document.getElementById("btn-create-story").disabled = true;
+      try {
+        currentStory = await fetchJSON(API + "/api/story/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, genre }),
+        });
+        closeModal();
+        currentChapter = 1;
+        await refreshStories();
+        renderChapterList();
+        populateWriteTab();
+        populateBibleTab();
+        renderCharacterList();
+        document.getElementById("no-story").classList.add("hidden");
+        document.getElementById("story-main").classList.remove("hidden");
+        document.getElementById("story-actions").classList.remove("hidden");
+        document.getElementById("chapter-sidebar").classList.remove("hidden");
+        // Open bible tab so user can fill in details
+        switchTab("bible");
+        document.getElementById("bible-title").focus();
+      } catch (e) {
+        alert("Error creating story: " + e.message);
+      } finally {
+        document.getElementById("btn-create-story").disabled = false;
+      }
+    });
+
+    // ── Delete story ─────────────────────────────────────────────────────────
+
+    document.getElementById("btn-delete-story").addEventListener("click", async () => {
+      if (!currentStory) return;
+      if (!confirm(`Delete "${currentStory.title}"?\n\nThis cannot be undone.`)) return;
+      try {
+        await fetchJSON(
+          API + "/api/story?title=" + encodeURIComponent(currentStory.title),
+          { method: "DELETE" }
+        );
+        currentStory = null;
+        document.getElementById("no-story").classList.remove("hidden");
+        document.getElementById("story-main").classList.add("hidden");
+        document.getElementById("story-actions").classList.add("hidden");
+        document.getElementById("chapter-sidebar").classList.add("hidden");
+        await refreshStories();
+      } catch (e) {
+        alert("Error deleting story: " + e.message);
+      }
+    });
+
+    // ── Add chapter ──────────────────────────────────────────────────────────
+
+    document.getElementById("btn-add-chapter").addEventListener("click", () => {
+      if (!currentStory) return;
+      const chapters = currentStory.chapters || [];
+      const nextNum = chapters.length > 0
+        ? Math.max(...chapters.map((c) => c.number)) + 1
+        : 1;
+      currentChapter = nextNum;
+      document.getElementById("chapter-num").value = nextNum;
+      document.getElementById("chapter-title").value = "";
+      document.getElementById("chapter-summary").value = "";
+      document.getElementById("editor").value = "";
+      renderChapterList();
+      switchTab("write");
+      document.getElementById("editor").focus();
+      setStatus("stream-status", `Ready for Chapter ${nextNum}`, "");
+    });
+
+    // ── Chapter number change ────────────────────────────────────────────────
+
+    document.getElementById("chapter-num").addEventListener("change", () => {
+      if (!currentStory) return;
+      currentChapter = parseInt(document.getElementById("chapter-num").value) || 1;
+      document.querySelectorAll(".chapter-item").forEach((li) => {
+        li.classList.toggle("active", parseInt(li.dataset.number) === currentChapter);
+      });
+      populateWriteTab();
+      refreshContextPack();
+    });
+
+    // ── Editor word count (live) ─────────────────────────────────────────────
+
+    document.getElementById("editor").addEventListener("input", updateEditorWordCount);
+
+    // ── Selection tools ──────────────────────────────────────────────────────
+
+    document.querySelectorAll(".sel-op-btn").forEach((btn) => {
       btn.addEventListener("click", async () => {
         if (!currentStory) return alert("Open a story first.");
         const ta = document.getElementById("editor");
         const sel = ta.value.substring(ta.selectionStart, ta.selectionEnd);
-        if (!sel.trim()) return alert("Select text in the editor first.");
-        const op = btn.getAttribute("data-op");
-        const btnSelf = btn;
-        btnSelf.disabled = true;
+        if (!sel.trim()) return alert("Highlight text in the editor first.");
+        btn.disabled = true;
         try {
           await readSSE(
             API + "/api/stream/selection",
             {
               title: currentStory.title,
-              chapter_number: parseInt(document.getElementById("chapter-num").value, 10) || 1,
+              chapter_number: parseInt(document.getElementById("chapter-num").value) || 1,
               selected_text: sel,
-              operation: op,
-              extra_instruction: "",
-            },
-            {}
+              operation: btn.dataset.op,
+              extra_instruction: document.getElementById("extra-sel-instruction").value,
+            }
           );
-        } catch (e) {
-          document.getElementById("stream-status").textContent = String(e);
-          document.getElementById("stream-status").className = "status error";
-        } finally {
-          btnSelf.disabled = false;
+        } catch (_) {} finally {
+          btn.disabled = false;
         }
       });
     });
@@ -443,63 +1490,52 @@
       ta.value = ta.value.slice(0, start) + rep + ta.value.slice(end);
       ta.selectionStart = start;
       ta.selectionEnd = start + rep.length;
+      updateEditorWordCount();
     });
 
-    document.getElementById("btn-save").addEventListener("click", async () => {
-      if (!currentStory) return alert("Open a story first.");
-      const n = parseInt(document.getElementById("chapter-num").value, 10) || 1;
-      let chapters = [...(currentStory.chapters || [])];
-      const idx = chapters.findIndex((c) => c.number === n);
-      const body = {
-        number: n,
-        title: document.getElementById("chapter-title").value,
-        summary: document.getElementById("chapter-summary").value,
-        content: document.getElementById("editor").value,
-        notes: idx >= 0 ? chapters[idx].notes || "" : "",
-        content_history: idx >= 0 ? chapters[idx].content_history || [] : [],
-      };
-      if (idx >= 0) chapters[idx] = body;
-      else chapters.push(body);
-      chapters.sort((a, b) => a.number - b.number);
-      const payload = { ...currentStory, chapters };
-      await fetchJSON(API + "/api/story", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ story: payload }),
-      });
-      currentStory = payload;
-      document.getElementById("stream-status").textContent = "Saved.";
-      document.getElementById("stream-status").className = "status ok";
-    });
+    // ── Export ───────────────────────────────────────────────────────────────
 
     document.getElementById("btn-export-md").addEventListener("click", async () => {
-      if (!currentStory) return;
-      const r = await fetchJSON(
-        API + "/api/export/markdown?title=" + encodeURIComponent(currentStory.title),
-        { method: "POST" }
-      );
-      alert("Exported to " + r.path);
+      if (!currentStory) return alert("Open a story first.");
+      try {
+        const r = await fetchJSON(
+          API + "/api/export/markdown?title=" + encodeURIComponent(currentStory.title),
+          { method: "POST" }
+        );
+        alert("Exported to:\n" + r.path);
+      } catch (e) { alert("Export failed: " + e.message); }
     });
 
     document.getElementById("btn-export-docx").addEventListener("click", async () => {
-      if (!currentStory) return;
+      if (!currentStory) return alert("Open a story first.");
       try {
         const r = await fetchJSON(
           API + "/api/export/docx?title=" + encodeURIComponent(currentStory.title),
           { method: "POST" }
         );
-        alert("Exported to " + r.path);
-      } catch (e) {
-        alert(String(e));
-      }
+        alert("Exported to:\n" + r.path);
+      } catch (e) { alert("Export failed: " + e.message); }
     });
+
+    document.getElementById("btn-export-txt").addEventListener("click", async () => {
+      if (!currentStory) return alert("Open a story first.");
+      try {
+        const r = await fetchJSON(
+          API + "/api/export/text?title=" + encodeURIComponent(currentStory.title),
+          { method: "POST" }
+        );
+        alert("Exported to:\n" + r.path);
+      } catch (e) { alert("Export failed: " + e.message); }
+    });
+
+    // ── Snapshot & restore ───────────────────────────────────────────────────
 
     document.getElementById("btn-snapshot").addEventListener("click", () => {
       if (!currentStory) return;
-      const n = parseInt(document.getElementById("chapter-num").value, 10) || 1;
-      let chapters = [...(currentStory.chapters || [])];
+      const n = currentChapter;
+      const chapters = [...(currentStory.chapters || [])];
       const idx = chapters.findIndex((c) => c.number === n);
-      if (idx < 0) return alert("Save the chapter first.");
+      if (idx < 0) return alert("Save the chapter first before snapshotting.");
       const hist = [...(chapters[idx].content_history || [])];
       hist.push({
         saved_at: new Date().toISOString(),
@@ -508,23 +1544,35 @@
       });
       chapters[idx] = { ...chapters[idx], content_history: hist.slice(-20) };
       currentStory = { ...currentStory, chapters };
-      alert("Snapshot added to in-memory story — click Save to persist.");
+      updateSnapshotInfo();
+      setStatus("stream-status", "Snapshot added — click Save to persist.", "ok");
     });
 
     document.getElementById("btn-restore").addEventListener("click", () => {
       if (!currentStory) return;
-      const n = parseInt(document.getElementById("chapter-num").value, 10) || 1;
       const chapters = [...(currentStory.chapters || [])];
-      const idx = chapters.findIndex((c) => c.number === n);
+      const idx = chapters.findIndex((c) => c.number === currentChapter);
       if (idx < 0) return;
       const hist = [...(chapters[idx].content_history || [])];
-      if (!hist.length) return alert("No snapshot.");
+      if (!hist.length) return alert("No snapshots available for this chapter.");
       const entry = hist.pop();
       chapters[idx] = { ...chapters[idx], content: entry.content, content_history: hist };
       currentStory = { ...currentStory, chapters };
       document.getElementById("editor").value = entry.content;
-      alert("Restored in memory — click Save to persist.");
+      updateEditorWordCount();
+      updateSnapshotInfo();
+      setStatus("stream-status", "Restored — click Save to persist.", "ok");
     });
+
+    function updateSnapshotInfo() {
+      if (!currentStory) return;
+      const ch = (currentStory.chapters || []).find((c) => c.number === currentChapter);
+      const count = ch ? (ch.content_history || []).length : 0;
+      document.getElementById("snapshot-count").textContent =
+        count > 0 ? `${count} snapshot${count !== 1 ? "s" : ""} available` : "";
+    }
+
+    // ── Init ─────────────────────────────────────────────────────────────────
 
     loadMeta();
     refreshStories().catch(console.error);
