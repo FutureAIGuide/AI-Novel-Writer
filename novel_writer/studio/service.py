@@ -107,6 +107,30 @@ class NovelStudioService:
             supports_streaming=supports,
         )
 
+    def delete_story(self, title: str) -> None:
+        """Delete the saved story file for *title*."""
+        self._fm.delete(title)
+
+    def stream_generate_chapter_summary(self, chapter: Chapter) -> Iterator[str]:
+        """Stream a 2-3 sentence AI summary of *chapter* content."""
+        ch_gen = ChapterGenerator()
+        words = chapter.content.split()
+        excerpt = (
+            chapter.content
+            if len(words) <= 4000
+            else "…\n" + " ".join(words[-4000:])
+        )
+        user_prompt = (
+            "Summarize the following chapter in 2-3 sentences, "
+            "capturing the key events and emotional beats:\n\n"
+            f"{excerpt}"
+        )
+        system = (
+            "You are a literary editor. Write concise, accurate chapter summaries "
+            "that capture plot points, character moments, and narrative tension."
+        )
+        yield from ch_gen.stream_chat(system, user_prompt)
+
     def export_markdown(self, story: Story) -> Path:
         return FileManager(self._output_dir).export_markdown(story)
 

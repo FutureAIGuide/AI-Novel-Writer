@@ -76,6 +76,20 @@ class FileManager:
         """
         return [p.stem.replace("_", " ") for p in sorted(self.output_dir.glob("*.json"))]
 
+    def delete(self, title: str) -> None:
+        """Delete the story file for *title*.
+
+        Args:
+            title: The story title (used to locate the file).
+
+        Raises:
+            FileNotFoundError: If no saved story with that title exists.
+        """
+        path = self._story_path(title)
+        if not path.exists():
+            raise FileNotFoundError(f"No saved story found for title: '{title}' at {path}")
+        path.unlink()
+
     def export_text(self, story: Story) -> Path:
         """Export the full novel as a plain-text file.
 
