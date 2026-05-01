@@ -85,3 +85,15 @@ class TestFileManager:
         # Should be loadable from path
         loaded = tmp_file_manager.load_from_path(path)
         assert loaded.title == "Hello: World! (2024)"
+
+    def test_export_markdown(
+        self,
+        tmp_file_manager: FileManager,
+        sample_story: Story,
+    ) -> None:
+        tmp_file_manager.save(sample_story)
+        md_path = tmp_file_manager.export_markdown(sample_story)
+        assert md_path.suffix == ".md"
+        text = md_path.read_text(encoding="utf-8")
+        assert sample_story.title in text
+        assert "First Vote" in text or "Chapter 1" in text

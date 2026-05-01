@@ -86,6 +86,8 @@ class TestProviderModels:
     def test_openrouter_defaults(self) -> None:
         cfg = OpenRouterSettings()
         assert cfg.model.startswith("openai/")
+        assert cfg.max_tokens == 2048
+        assert cfg.temperature == 0.8
 
     def test_app_settings_defaults(self) -> None:
         settings = AppSettings()

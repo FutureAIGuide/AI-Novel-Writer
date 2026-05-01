@@ -131,6 +131,12 @@ class OpenRouterSettings(BaseModel):
     site_name: str = Field(
         default="AI Novel Writer", description="Your app name for OpenRouter attribution"
     )
+    max_tokens: int = Field(default=2048, description="Maximum tokens per request")
+    temperature: float = Field(
+        default=0.8, description="Creativity level (0.0–2.0 for OpenAI-compatible APIs)",
+        ge=0.0,
+        le=2.0,
+    )
 
 
 class LMStudioSettings(BaseModel):
@@ -145,6 +151,10 @@ class LMStudioSettings(BaseModel):
         default="",
         description="Model identifier as reported by LM Studio (leave blank to auto-detect)",
     )
+    max_tokens: int = Field(default=2048, description="Maximum tokens per request")
+    temperature: float = Field(
+        default=0.8, description="Creativity level (0.0–2.0)", ge=0.0, le=2.0
+    )
 
 
 class OllamaSettings(BaseModel):
@@ -156,6 +166,10 @@ class OllamaSettings(BaseModel):
         description="Ollama server base URL",
     )
     model: str = Field(default="llama3", description="Ollama model name")
+    max_tokens: int = Field(default=2048, description="Maximum tokens per request")
+    temperature: float = Field(
+        default=0.8, description="Creativity level (0.0–2.0)", ge=0.0, le=2.0
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -180,6 +194,14 @@ class AppSettings(BaseModel):
     lm_studio: LMStudioSettings = Field(default_factory=LMStudioSettings)
     ollama: OllamaSettings = Field(default_factory=OllamaSettings)
     output_dir: str = Field(default="stories", description="Directory where stories are saved")
+    studio_context_budget_tokens: int = Field(
+        default=0,
+        description=(
+            "Approximate max prompt tokens for studio AI context packing "
+            "(0 = auto from provider: lower for lm_studio/ollama)"
+        ),
+        ge=0,
+    )
 
     def get_active_provider_settings(
         self,

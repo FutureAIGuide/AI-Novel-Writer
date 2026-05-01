@@ -55,3 +55,20 @@ class TestChapterModel:
         assert chap.summary == ""
         assert chap.content == ""
         assert chap.notes == ""
+        assert chap.content_history == []
+
+    def test_snapshot_and_restore(self) -> None:
+        chap = Chapter(number=1, content="first draft")
+        chap.snapshot_content("before edit")
+        chap.content = "second draft"
+        assert len(chap.content_history) == 1
+        assert chap.content_history[0].content == "first draft"
+        ok = chap.restore_latest_snapshot()
+        assert ok
+        assert chap.content == "first draft"
+        assert chap.content_history == []
+
+    def test_snapshot_skips_empty_content(self) -> None:
+        chap = Chapter(number=1, content="")
+        chap.snapshot_content()
+        assert chap.content_history == []

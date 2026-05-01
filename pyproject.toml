@@ -5,11 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ai-novel-writer"
 version = "0.1.0"
-description = "An AI-powered novel writing assistant using OpenAI"
+description = "AI-powered novel writing assistant with multi-provider support and a local web studio"
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
-keywords = ["ai", "novel", "writing", "openai", "gpt"]
+keywords = ["ai", "novel", "writing", "openai", "ollama", "lm-studio", "gpt"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -23,12 +23,30 @@ dependencies = [
     "pydantic>=2.0.0",
 ]
 
+[project.optional-dependencies]
+studio = [
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.27.0",
+]
+dev = [
+    "pytest>=7.0.0",
+]
+docx = [
+    "python-docx>=1.1.0",
+]
+packaging = [
+    "pyinstaller>=6.0.0",
+]
+
 [project.scripts]
 novel-writer = "novel_writer.main:cli"
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["novel_writer*"]
+
+[tool.setuptools.package-data]
+novel_writer = ["studio/static/*.html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

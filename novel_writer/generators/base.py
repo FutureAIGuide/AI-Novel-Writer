@@ -2,9 +2,18 @@
 
 from __future__ import annotations
 
+import logging
+from collections.abc import Iterator
+from typing import TYPE_CHECKING
+
 from openai import OpenAI
 
 from novel_writer.config import Config
+
+if TYPE_CHECKING:
+    from novel_writer.settings.models import AppSettings
+
+logger = logging.getLogger(__name__)
 
 
 class BaseGenerator:
@@ -20,6 +29,7 @@ class BaseGenerator:
     """
 
     def __init__(self, client: OpenAI | None = None) -> None:
+        self._app_settings: AppSettings | None = None
         if client is not None:
             # Direct injection (testing / legacy usage) — use OpenAI compat path
             Config.validate()
@@ -38,6 +48,7 @@ class BaseGenerator:
             mgr = SettingsManager()
             if mgr.exists():
                 settings = mgr.load()
+                self._app_settings = settings
                 self._provider = settings.active_provider
                 self._setup_from_settings(settings)
                 return
@@ -52,6 +63,16 @@ class BaseGenerator:
         self._model = Config.OPENAI_MODEL
         self._max_tokens = Config.OPENAI_MAX_TOKENS
         self._temperature = Config.OPENAI_TEMPERATURE
+
+    @property
+    def provider(self) -> str:
+        """Active provider key (e.g. ``openai``, ``ollama``)."""
+        return self._provider
+
+    @property
+    def supports_streaming(self) -> bool:
+        """True when token streaming is available (OpenAI-compatible path)."""
+        return bool(self._use_openai_compat)
 
     # ------------------------------------------------------------------
     # Provider setup
@@ -165,8 +186,8 @@ class BaseGenerator:
             },
         )
         self._model = cfg.model
-        self._max_tokens = 2048
-        self._temperature = 0.8
+        self._max_tokens = cfg.max_tokens
+        self._temperature = cfg.temperature
         self._use_openai_compat = True
 
     def _setup_lm_studio(self, settings: object) -> None:
@@ -177,8 +198,8 @@ class BaseGenerator:
         endpoint = cfg.endpoint_url or "http://localhost:1234/v1"
         self._client = OpenAI(api_key="lm-studio", base_url=endpoint)
         self._model = cfg.model or "local-model"
-        self._max_tokens = 2048
-        self._temperature = 0.8
+        self._max_tokens = cfg.max_tokens
+        self._temperature = cfg.temperature
         self._use_openai_compat = True
 
     def _setup_ollama(self, settings: object) -> None:
@@ -189,8 +210,8 @@ class BaseGenerator:
         base = (cfg.endpoint_url or "http://localhost:11434").rstrip("/")
         self._client = OpenAI(api_key="ollama", base_url=f"{base}/v1")
         self._model = cfg.model or "llama3"
-        self._max_tokens = 2048
-        self._temperature = 0.8
+        self._max_tokens = cfg.max_tokens
+        self._temperature = cfg.temperature
         self._use_openai_compat = True
 
     # ------------------------------------------------------------------
@@ -210,6 +231,23 @@ class BaseGenerator:
     def _chat_openai_compat(self, system_prompt: str, user_prompt: str) -> str:
         """OpenAI-compatible chat completion (openai, openrouter, lm_studio, ollama)."""
         assert isinstance(self._client, OpenAI)
+        text = self._openai_compat_completion_text(system_prompt, user_prompt)
+        if not text.strip():
+            logger.warning(
+                "Empty completion from provider=%s model=%s; retrying once",
+                self._provider,
+                self._model,
+            )
+            text = self._openai_compat_completion_text(system_prompt, user_prompt)
+        if not text.strip():
+            raise RuntimeError(
+                f"The model returned no text (provider={self._provider!r}, model={self._model!r}). "
+                "Check that the local server is running and the model is loaded."
+            )
+        return text
+
+    def _openai_compat_completion_text(self, system_prompt: str, user_prompt: str) -> str:
+        assert isinstance(self._client, OpenAI)
         response = self._client.chat.completions.create(
             model=self._model,
             max_tokens=self._max_tokens,
@@ -220,6 +258,43 @@ class BaseGenerator:
             ],
         )
         return response.choices[0].message.content or ""
+
+    def stream_chat(self, system_prompt: str, user_prompt: str) -> Iterator[str]:
+        """Yield text fragments from a streamed chat completion (OpenAI-compatible only)."""
+        if not self._use_openai_compat:
+            yield self._chat(system_prompt, user_prompt)
+            return
+        assert isinstance(self._client, OpenAI)
+        stream = self._client.chat.completions.create(
+            model=self._model,
+            max_tokens=self._max_tokens,
+            temperature=self._temperature,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            stream=True,
+        )
+        assembled: list[str] = []
+        for chunk in stream:
+            choice = chunk.choices[0] if chunk.choices else None
+            if choice is None:
+                continue
+            delta = getattr(choice, "delta", None)
+            piece = getattr(delta, "content", None) if delta is not None else None
+            if piece:
+                assembled.append(piece)
+                yield piece
+        full = "".join(assembled)
+        if not full.strip():
+            logger.warning(
+                "Empty streamed completion from provider=%s model=%s",
+                self._provider,
+                self._model,
+            )
+            # Fallback: one non-streaming attempt
+            full = self._chat_openai_compat(system_prompt, user_prompt)
+            yield full
 
     def _chat_anthropic(self, system_prompt: str, user_prompt: str) -> str:
         """Anthropic Messages API."""

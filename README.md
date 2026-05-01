@@ -88,6 +88,10 @@ source .venv/bin/activate      # macOS / Linux
 pip install -r requirements.txt
 # or install as a package (enables the `novel-writer` command)
 pip install -e .
+# optional: local web studio (FastAPI + browser UI)
+pip install -e ".[studio]"
+# optional: export manuscript to Word (.docx)
+pip install -e ".[docx]"
 ```
 
 ### 4. Configure your AI provider
@@ -227,6 +231,34 @@ novel-writer settings import --input my-settings-backup.json
 > Anthropic: `pip install anthropic`  
 > Google AI: `pip install google-generativeai`  
 > All other providers use the built-in `openai` package (OpenAI-compatible API).
+
+---
+
+## Local web studio (macOS / Linux / Windows)
+
+Run a browser-based editor on your machine (same stories folder as the CLI):
+
+```bash
+pip install -e ".[studio]"
+novel-writer studio
+# open http://127.0.0.1:8765/
+```
+
+Features:
+
+- Pick a saved story, edit chapter text, **stream** “Generate chapter” / “Continue”
+- **Selection tools**: rewrite, expand, shorten, tone tweaks (uses packed story bible + recent chapter context)
+- Context meter uses an estimated token budget (tighter default for **LM Studio** / **Ollama**; override with `studio_context_budget_tokens` in your settings JSON, or leave `0` for auto)
+- **Export** Markdown or DOCX from the sidebar (DOCX needs `pip install -e ".[docx]"`)
+
+### Optional: single-folder app bundle (PyInstaller)
+
+```bash
+pip install -e ".[studio,packaging]"
+pyinstaller packaging/pyinstaller.spec
+```
+
+Run the generated `ai-novel-writer-studio` executable from the `dist/` output; it starts the studio on port **8765**.
 
 ---
 
